@@ -1,32 +1,45 @@
-class Player{//this is actually just one class that has all the data about all four players,
-				//because I don't konw how to dynamically instaciate classes.
+class Player{//there are 4 implementations of the player class, regardless of how many people are playing the game
 
 
 	int lives;
-	
-	bool horz;//to tell whether it is tall or short
-	
-public: void initialize(int);
+	int red;
+	int green;
+	int blue;
+
+
+public:		void setColor(int,int,int);
 			int getlives();
-			bool is_Horz(int);
 			int getPos(int);
+			int getRed();
+			int getGreen();
+			int getBlue();
 };
 
-
-void initialize(int p){
-
+int Player::getRed(){
 	
+	return red;
+
+}
+
+int Player::getGreen(){
+	
+	return green;
+
+}
+int Player::getBlue(){
+	
+	return blue;
 
 }
 
 
-bool Player::is_Horz(int i){
-	if (i==3||i==4){
-		return true;
-	}
+void Player::setColor(int r, int g, int b){
+
+	red = r;
+
+	green = g;
+
+	blue = b;
+
 }
-
-
-
-
 
