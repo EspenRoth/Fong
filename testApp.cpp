@@ -9,7 +9,10 @@ const int WIDTH = 600;
 const int HEIGHT = 600;
 const int PADDLE_LENGTH = 150;
 const int PADDLE_WIDTH = 10;
-const int PLAYER_SPEED = 40;
+const int PLAYER_SPEED = 1;
+
+bool keyIsDown[256];
+
 //width of 4 different paddles; we can just update to a wall or something if there are less players
 int length[4] = {PADDLE_LENGTH,PADDLE_LENGTH,PADDLE_LENGTH,PADDLE_LENGTH};
 //position of each player, because each player only has one axis to move on.
@@ -43,7 +46,7 @@ void startMenu(){//The startMenu function will set number of players and lives,
 void startGame(int p){//initializes the game
 	ofBackground(0,0,0);
 	
-	ball.initialize(HEIGHT/2,WIDTH/2, .35, .8);
+	ball.initialize(HEIGHT/2,WIDTH/2, .4, .18);
 	
 	//first set all the colors to white
 	p1.setColor(255,255,255);
@@ -55,7 +58,7 @@ void startGame(int p){//initializes the game
 		for(p; p < 4 ;p++){
 			length[p] = WIDTH;
 		}
-		/*this next part makes the paddles of players that aren't playing turn black, so they aren't seen.
+		//this next part makes the paddles of players that aren't playing turn black, so they aren't seen.
 		if (players < 4){
 			p4.setColor(0,0,0);
 		}
@@ -68,7 +71,7 @@ void startGame(int p){//initializes the game
 		if (players < 1){
 			p1.setColor(0,0,0);
 		}
-		*/
+		
 }
 
 
@@ -89,6 +92,42 @@ void drawPaddles(){//this function just draws the paddles at each of their locat
 	//fourth
 	ofSetColor(p4.getRed(),p4.getGreen(),p4.getBlue());
 	ofRect(position[3], HEIGHT - PADDLE_WIDTH, length[3], PADDLE_WIDTH);
+
+}
+
+void changePaddles(){
+
+	//Player 1 controlls
+	if (keyIsDown['a']){//down
+		position[0] =position[0] + PLAYER_SPEED;
+	}
+	else if (keyIsDown['q']){//up
+		position[0] =position[0] - PLAYER_SPEED;
+	}
+
+	//Player 2 controlls
+	if (keyIsDown['5']){//down
+		position[1] =position[1] + PLAYER_SPEED;
+	}
+	else if (keyIsDown['8']){//up
+		position[1] =position[1] - PLAYER_SPEED;
+	}
+
+	//Player 3 controlls
+	if (keyIsDown['r']){//right
+		position[2] =position[2] + PLAYER_SPEED;
+	}
+	else if (keyIsDown['e']){//left
+		position[2] =position[2] - PLAYER_SPEED;
+	}
+
+	//Player 4 controlls
+	if (keyIsDown['v']){//right
+		position[3] =position[3] + PLAYER_SPEED;
+	}
+	else if (keyIsDown['c']){//left
+		position[3] =position[3] - PLAYER_SPEED;
+	}
 
 }
 
@@ -115,19 +154,27 @@ void doesItBounce(){
 
 }
 
+
+
+
+
+
 void testApp::setup() {
 	startMenu();
 	startGame(players);
 
 }
 
-
 void testApp::update() {
 
+	//updated the position of paddles
+	changePaddles();
+	
+	//updates position of ball
 	ball.move();
-	
-	
-	doesItBounce();//decides whether or not the ball bounces, and changes the velocity based on which side it hits
+
+	//decides whether or not the ball bounces, and changes the velocity based on which side it hits
+	doesItBounce();
 
 
 }
@@ -146,45 +193,20 @@ void testApp::draw() {
 
 
 void testApp::keyPressed(int key) {
+	/*
+	
+	*/
 
-	//Player 1 controlls
-	if (key == 'a'){//down
-		position[0] =position[0] + PLAYER_SPEED;
-	}
-	else if (key == 'q'){//up
-		position[0] =position[0] - PLAYER_SPEED;
-	}
 
-	//Player 2 controlls
-	if (key == '5'){//down
-		position[1] =position[1] + PLAYER_SPEED;
-	}
-	else if (key == '8'){//up
-		position[1] =position[1] - PLAYER_SPEED;
-	}
-
-	//Player 3 controlls
-	if (key == 'r'){//right
-		position[2] =position[2] + PLAYER_SPEED;
-	}
-	else if (key == 'e'){//left
-		position[2] =position[2] - PLAYER_SPEED;
-	}
-
-	//Player 4 controlls
-	if (key == 'v'){//right
-		position[3] =position[3] + PLAYER_SPEED;
-	}
-	else if (key == 'c'){//left
-		position[3] =position[3] - PLAYER_SPEED;
-	}
-
+	keyIsDown[key] = true;
 	
 		
 
 }
 
 void testApp::keyReleased(int key) {
+
+	keyIsDown[key] = false;
 
 }
 

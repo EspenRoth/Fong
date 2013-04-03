@@ -19,22 +19,3 @@ public://these are the functions that any part of the program can use to change 
 
 };
 
-void Ball::initialize(double a, double b, double c,double d){
-
-	xpos = a;
-	ypos = b; 
-	xvel = c;
-	yvel = d;
-
-}
-
-void Ball::bounce(bool is_side){
-
-	if(is_side){
-		xvel = -1*xvel;
-	} 
-	else{
-		yvel = -1*yvel;
-	}
-
-}
