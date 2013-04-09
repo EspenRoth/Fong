@@ -1,7 +1,7 @@
 #include <string>
 #include "Player.h"
 #include "testApp.h"
-#include "Ball.h"
+#include "ball.h"
 //here we declare all the global variables. Number of players, window size
 int players = -1;
 int lives = -1;
@@ -11,22 +11,29 @@ const int PADDLE_LENGTH = 150;
 const int PADDLE_WIDTH = 10;
 const int PLAYER_SPEED = 1;
 
+//for smoothness and double key pressing action!
 bool keyIsDown[256];
 
-//width of 4 different paddles; we can just update to a wall or something if there are less players
-int length[4] = {PADDLE_LENGTH,PADDLE_LENGTH,PADDLE_LENGTH,PADDLE_LENGTH};
-//position of each player, because each player only has one axis to move on.
-int position[4] = {0};
 Ball ball;
+
 Player p1;
 Player p2;
 Player p3;
 Player p4;
 
 
+void setAllLives(int l){
+
+	p1.setLives(l);
+	p2.setLives(l);
+	p3.setLives(l);
+	p4.setLives(l);
 
 
-void startMenu(){//The startMenu function will set number of players and lives, 
+}
+
+void startMenu(){
+//The startMenu function will set number of players and lives, 
 //and anything else we need to set up in a menu before we play the game.
 	
 	
@@ -37,61 +44,102 @@ void startMenu(){//The startMenu function will set number of players and lives,
 		cin >> players;
 	}
 
-	while (lives < 1 ||lives > 25){
-		cout<<"Enter amount of lives, 1-25"<<endl;
+	while (lives < 1 ||lives > 9){
+		cout<<"Enter amount of lives, 1-9"<<endl;
 		cin >> lives;
+		setAllLives(lives);
 	}
 }
 
 void startGame(int p){//initializes the game
+	
+	
 	ofBackground(0,0,0);
 	
 	ball.initialize(HEIGHT/2,WIDTH/2, .4, .18);
 	
-	//first set all the colors to white
+	//first set all the colors to white, and set initial positions
 	p1.setColor(255,255,255);
-	p2.setColor(255,255,255);
-	p3.setColor(255,255,255);
-	p4.setColor(255,255,255);
+	p1.setPos(WIDTH/2);
+	p1.setLength(PADDLE_LENGTH);
 	
-		//right meow, it just sets the width of any paddle of a non-player to the width of the window
-		for(p; p < 4 ;p++){
-			length[p] = WIDTH;
-		}
-		//this next part makes the paddles of players that aren't playing turn black, so they aren't seen.
-		if (players < 4){
-			p4.setColor(0,0,0);
-		}
-		if (players < 3){
-			p3.setColor(0,0,0);
-		}
-		if (players < 2){
-			p2.setColor(0,0,0);
-		}
-		if (players < 1){
-			p1.setColor(0,0,0);
-		}
+	p2.setColor(255,255,255);
+	p2.setPos(WIDTH/2);
+	p2.setLength(PADDLE_LENGTH);
+	
+	p3.setColor(255,255,255);
+	p3.setPos(WIDTH/2);
+	p3.setLength(PADDLE_LENGTH);
+	
+	p4.setColor(255,255,255);
+	p4.setPos(WIDTH/2);
+	p4.setLength(PADDLE_LENGTH);
+	
+		
+	//this next part makes the paddles of players that aren't playing turn black, so they aren't seen.
+	//also, it sets them to be the length of the window, and start at position 0, turning them into "invisible walls"
+	//still need to make it so they can't move, though
+	if (players < 4){
+		p4.setPos(0);
+		p4.setColor(0,0,0);
+		p4.setLength(WIDTH);
+	}
+	if (players < 3){
+		p3.setPos(0);
+		p3.setColor(0,0,0);
+		p3.setLength(WIDTH);
+	}
+	if (players < 2){
+		p2.setPos(0);
+		p2.setColor(0,0,0);
+		p2.setLength(WIDTH);
+	}
+	if (players < 1){
+		p1.setPos(0);
+		p1.setColor(0,0,0);
+		p1.setLength(WIDTH);
+	}
 		
 }
-
 
 void drawPaddles(){//this function just draws the paddles at each of their locations
 
 	//draws the first paddle
 	ofSetColor(p1.getRed(),p1.getGreen(),p1.getBlue());
-	ofRect(0,position[0],PADDLE_WIDTH,length[0]);
+	ofRect(0,p1.getPosition(),PADDLE_WIDTH,p1.getLength());
 
-	//seccond
+	//seccond...
 	ofSetColor(p2.getRed(),p2.getGreen(),p2.getBlue());
-	ofRect(WIDTH-PADDLE_WIDTH, position[1], PADDLE_WIDTH, length[1]);
+	ofRect(WIDTH-PADDLE_WIDTH,p2.getPosition(),PADDLE_WIDTH,p2.getLength());
 	
 	//third..
 	ofSetColor(p3.getRed(),p3.getGreen(),p3.getBlue());
-	ofRect(position[2],0,length[2],PADDLE_WIDTH);
+	ofRect(p3.getPosition(),0,p3.getLength(),PADDLE_WIDTH);
 
 	//fourth
 	ofSetColor(p4.getRed(),p4.getGreen(),p4.getBlue());
-	ofRect(position[3], HEIGHT - PADDLE_WIDTH, length[3], PADDLE_WIDTH);
+	ofRect(p4.getPosition(),WIDTH-PADDLE_WIDTH,p4.getLength(),PADDLE_WIDTH);
+
+}
+void drawLives(){
+
+	//draw p1 lives
+	ofSetColor(p1.getRed(),p1.getGreen(),p1.getBlue());
+	ofDrawBitmapString(p1.getLivesAsString(), 100, 200);
+
+	//player 2... you get the picture
+	ofSetColor(p2.getRed(),p2.getGreen(),p2.getBlue());
+	ofDrawBitmapString(p2.getLivesAsString(), 500, 200);
+
+	//3
+	ofSetColor(p3.getRed(),p3.getGreen(),p3.getBlue());
+	ofDrawBitmapString(p3.getLivesAsString(), 200, 100);
+
+	//4
+	ofSetColor(p4.getRed(),p4.getGreen(),p4.getBlue());
+	ofDrawBitmapString(p4.getLivesAsString(), 200, 500);
+
+
 
 }
 
@@ -99,65 +147,60 @@ void changePaddles(){
 
 	//Player 1 controlls
 	if (keyIsDown['a']){//down
-		position[0] =position[0] + PLAYER_SPEED;
+		p1.move(1, PLAYER_SPEED);
 	}
 	else if (keyIsDown['q']){//up
-		position[0] =position[0] - PLAYER_SPEED;
+		p1.move(-1, PLAYER_SPEED);
 	}
 
 	//Player 2 controlls
 	if (keyIsDown['5']){//down
-		position[1] =position[1] + PLAYER_SPEED;
+		p2.move(1, PLAYER_SPEED);
 	}
 	else if (keyIsDown['8']){//up
-		position[1] =position[1] - PLAYER_SPEED;
+		p2.move(-1, PLAYER_SPEED);
 	}
 
 	//Player 3 controlls
 	if (keyIsDown['r']){//right
-		position[2] =position[2] + PLAYER_SPEED;
+		p3.move(1, PLAYER_SPEED);
 	}
 	else if (keyIsDown['e']){//left
-		position[2] =position[2] - PLAYER_SPEED;
+		p3.move(-1, PLAYER_SPEED);
 	}
 
 	//Player 4 controlls
 	if (keyIsDown['v']){//right
-		position[3] =position[3] + PLAYER_SPEED;
+		p4.move(1, PLAYER_SPEED);
 	}
 	else if (keyIsDown['c']){//left
-		position[3] =position[3] - PLAYER_SPEED;
+		p4.move(-1, PLAYER_SPEED);
 	}
 
 }
 
 void doesItBounce(){
 
-	if((ball.getX() < 0)   &&   (ball.getY()>position[0]   &&  ball.getY()< position[0]+length[0] )){
+	if((ball.getX() < 0)   &&   (ball.getY()>p1.getPosition()   &&  ball.getY()< p1.getPosition()+p1.getLength() )){
 		ball.bounce(1);
 	}
 
 	//if the ball hits the right paddle, or p2
-	if((ball.getX() > WIDTH)   &&   (ball.getY()>position[1]   &&  ball.getY()< position[1]+length[1] )){
+	if((ball.getX() > WIDTH)   &&   (ball.getY()>p2.getPosition()   &&  ball.getY()< p2.getPosition()+p2.getLength() )){
 		ball.bounce(1);
 	}
 	
 	//if the ball hits the top paddle, or p3
-	if((ball.getY() < 0)   &&   (ball.getX()>position[2]   &&  ball.getX()< position[2]+length[2] )){
+	if((ball.getY() < 0)   &&   (ball.getX()>p3.getPosition()   &&  ball.getX()< p3.getPosition()+p3.getLength() )){
 		ball.bounce(0);
 	}
 	
 	//if the ball hits the bottom paddle, or p4
-	if((ball.getY() > HEIGHT)   &&   (ball.getX()>position[3]   &&  ball.getX()< position[3]+length[3] )){
+	if((ball.getY() > HEIGHT)   &&   (ball.getX()>p4.getPosition()   &&  ball.getX()< p4.getPosition()+p4.getLength() )){
 		ball.bounce(0);
 	}
 
 }
-
-
-
-
-
 
 void testApp::setup() {
 	startMenu();
@@ -183,6 +226,7 @@ void testApp::draw() {
 
 	
 	drawPaddles();
+	drawLives();
 	
 	
 	//draw the ball
@@ -193,14 +237,10 @@ void testApp::draw() {
 
 
 void testApp::keyPressed(int key) {
-	/*
 	
-	*/
-
 
 	keyIsDown[key] = true;
 	
-		
 
 }
 
