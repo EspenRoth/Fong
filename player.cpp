@@ -40,7 +40,7 @@ int Player::getLives(){
 	return lives;
 
 }
-int Player::getPosition(){
+double Player::getPosition(){
 
 	return position;
 
@@ -50,7 +50,22 @@ void Player::setLives(int l){
 lives = l;
 
 }
-void Player::move(int a,int s){
+void Player::die(){
+
+	if (lives > 0){
+		
+		lives --;
+
+	}
+	else{
+
+		setPos(0);
+		setLength(600);
+
+	}
+
+}
+void Player::move(int a,double s){
 
 	position = position + a * s;
 

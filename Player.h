@@ -9,7 +9,7 @@ private:
 	int red;
 	int green;
 	int blue;
-	int position;//position on the axis of movement
+	double position;//position on the axis of movement
 	int length;//length of paddle
 
 
@@ -21,12 +21,13 @@ public:
 			void setLength(int l);
 			void setPos(int p);
 			void setLives(int l);
-			void move(int a, int s);
+			void move(int a, double s);
+			void die();
 			int getLives();
 			int getRed();
 			int getGreen();
 			int getBlue();
-			int getPosition();
+			double getPosition();
 			int getLength();
 			std::string getLivesAsString();
 };
